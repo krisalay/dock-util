@@ -1,4 +1,5 @@
 ![Krisalay|Dock Util](https://raw.githubusercontent.com/krisalay/dock-util/438e95352c7ec35c0f43243e5a95440c22d8900a/assets/banner.svg)
+![](https://img.shields.io/github/languages/count/krisalay/dock-util?style=for-the-badge) ![](https://img.shields.io/tokei/lines/github/krisalay/dock-util?style=for-the-badge) ![](https://img.shields.io/github/issues-raw/krisalay/dock-util?style=for-the-badge) ![](https://img.shields.io/github/v/release/krisalay/dock-util?style=for-the-badge) ![](https://img.shields.io/github/contributors/krisalay/dock-util?style=for-the-badge)
 
 In some cases we want to have a levarage where we can install/unistall some services from our system. Additionally, we want to test some features with different versions of services like RabbitMQ, Redis, and many more.
 Docker provides us this levarage, but again everytime we need some service to start we have to write all sort of commands, or we can use docker-compose to start our services.
