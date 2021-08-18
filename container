@@ -1,0 +1,93 @@
+#!/usr/bin/env bash
+set -e
+
+export WORKDIR=$(cd $(dirname $0) && pwd)
+. "$WORKDIR/common"
+
+cli_help() {
+  cli_name=${0##*/}
+  echo "
+    Fork Service
+    Version: $(cat $WORKDIR/VERSION)
+    Usage: $cli_name [service] [operation]
+    Commands:
+      ./container rabbitmq start                          Starts rabbitmq container
+                                                          #Example
+                                                          ./container rabbitmq start
+
+      ./container rabbitmq stop                           Stops rabbitmq container
+                                                          #Example
+                                                          ./container rabbitmq stop
+
+      ./container redis start                             Starts redis container
+                                                          #Example
+                                                          ./container redis start
+
+      ./container redis stop                              Stops redis container
+                                                          #Example
+                                                          ./container redis stop
+      
+      ./container redis-cli start                             Starts redis-cli container
+                                                          #Example
+                                                          ./container redis-cli start
+
+      ./container help                                    Help
+  "
+  exit 1
+}
+
+cli_log "Exporting config..."
+export $(cat "$WORKDIR/config" | xargs)
+
+service=$(echo "$1" |  tr '[:upper:]' '[:lower:]')
+operation=$(echo "$2" |  tr '[:upper:]' '[:lower:]')
+
+case "$service" in
+  rabbitmq)
+    case "$operation" in
+      start)
+        cli_log "Starting RabbitMQ Service"
+        docker run -d --hostname rabbitmq --name rabbitmq -p 5672:5672 rabbitmq:3
+        docker run -d --hostname rabbitmq --name rabbitmq-management -p 15672:15672 rabbitmq:3-management
+        ;;
+      stop)
+        cli_log "Stopping RabbitMQ Service"
+        docker rm --force rabbitmq
+        docker rm --force rabbitmq-management
+        ;;
+      *)
+        cli_help "Invalid operation provided. Use either one of these: start, stop"
+        ;;
+    esac
+    ;;
+  redis)
+    case "$operation" in
+      start)
+        cli_log "Starting Redis Service"
+        docker run -d --name redis -p 6379:6379 redis
+        ;;
+      stop)
+        cli_log "Stopping Redis Service"
+        docker rm --force redis
+        ;;
+      *)
+        cli_help "Invalid operation provided. Use either one of these: start, stop"
+        ;;
+    esac
+    ;;
+  redis-cli)
+    case "$operation" in
+      start)
+        cli_log "Starting Redis CLI Service"
+        [ ! "$(docker ps -a | grep redis)" ] && docker run -d --name redis -p 6379:6379 redis
+        docker exec -it redis redis-cli
+        ;;
+      *)
+        cli_help "Invalid operation provided. Use either one of these: start, stop"
+        ;;
+    esac
+    ;;
+  help|h)
+    cli_help
+    ;;
+esac
