@@ -50,3 +50,26 @@ Stops Redis service.
 ```
 Starts a Redis service on port 6379 and its CLI.
 
+**Start an Elastic Search Container**
+```sh
+./container elastic-search start
+```
+Starts an Elastic Search service on port 9200.
+
+**Stop an Elastic Search Container**
+```sh
+./container elastic-search stop
+```
+Stops Elastic Search service.
+
+**Start Kibana Container**
+```sh
+./container kibana start
+```
+Starts Kibana service on port 5601.
+
+**Stop Kibana Container**
+```sh
+./container kibana stop
+```
+Stops Kibana service.
