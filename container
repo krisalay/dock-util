@@ -27,9 +27,25 @@ cli_help() {
                                                           #Example
                                                           ./container redis stop
       
-      ./container redis-cli start                             Starts redis-cli container
+      ./container redis-cli start                         Starts redis-cli container
                                                           #Example
                                                           ./container redis-cli start
+      
+      ./container elastic-search start                    Starts elastic search container
+                                                          #Example
+                                                          ./container elastic-search start
+
+      ./container elastic-search stop                     Stops elastic-search container
+                                                          #Example
+                                                          ./container elastic-search stop
+      
+      ./container kibana start                            Starts kibana container
+                                                          #Example
+                                                          ./container kibana start
+
+      ./container kibana stop                             Stops kibana container
+                                                          #Example
+                                                          ./container kibana stop
 
       ./container help                                    Help
   "
