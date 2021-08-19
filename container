@@ -36,8 +36,8 @@ cli_help() {
   exit 1
 }
 
-cli_log "Exporting config..."
-export $(cat "$WORKDIR/config" | xargs)
+cli_log "Exporting environment variables..."
+export $(cat "$WORKDIR/env" | xargs)
 
 service=$(echo "$1" |  tr '[:upper:]' '[:lower:]')
 operation=$(echo "$2" |  tr '[:upper:]' '[:lower:]')
@@ -81,6 +81,40 @@ case "$service" in
         cli_log "Starting Redis CLI Service"
         [ ! "$(docker ps -a | grep redis)" ] && docker run -d --name redis -p 6379:6379 redis
         docker exec -it redis redis-cli
+        ;;
+      *)
+        cli_help "Invalid operation provided. Use either one of these: start, stop"
+        ;;
+    esac
+    ;;
+  elastic-search)
+    case "$operation" in
+      start)
+        cli_log "Starting Elastic Search Service"
+        config=$(echo $(cat $(pwd)/config/elastic-search.config))
+        sudo sysctl -w vm.max_map_count=262144
+        docker run -d --name elastic-search $config --env-file $(pwd)/config/elastic-search.env docker.elastic.co/elasticsearch/elasticsearch:7.14.0
+        ;;
+      stop)
+        cli_log "Stopping Elastic Search Service"
+        docker rm --force elastic-search
+        sudo sysctl -w vm.max_map_count=65530
+        ;;
+      *)
+        cli_help "Invalid operation provided. Use either one of these: start, stop"
+        ;;
+    esac
+    ;;
+  kibana)
+    case "$operation" in
+      start)
+        cli_log "Starting Kibana Service"
+        elasticSearchHost=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' elastic-search)
+        docker run -d --name kibana --link elastic-search --env ELASTICSEARCH_HOSTS=http://$elasticSearchHost:9200 -p 5601:5601 docker.elastic.co/kibana/kibana:7.14.0
+        ;;
+      stop)
+        cli_log "Stopping Kibana Service"
+        docker rm --force kibana
         ;;
       *)
         cli_help "Invalid operation provided. Use either one of these: start, stop"
