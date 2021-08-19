@@ -63,8 +63,8 @@ case "$service" in
     case "$operation" in
       start)
         cli_log "Starting RabbitMQ Service"
-        docker run -d --hostname rabbitmq --name rabbitmq -p 5672:5672 rabbitmq:3
-        docker run -d --hostname rabbitmq --name rabbitmq-management -p 15672:15672 rabbitmq:3-management
+        docker run -d --hostname rabbitmq --name rabbitmq -p 5672:5672 rabbitmq:$RABBITMQ_VERSION
+        docker run -d --hostname rabbitmq --name rabbitmq-management -p 15672:15672 rabbitmq:$RABBITMQ_MANAGEMENT_VERSION
         ;;
       stop)
         cli_log "Stopping RabbitMQ Service"
@@ -80,7 +80,7 @@ case "$service" in
     case "$operation" in
       start)
         cli_log "Starting Redis Service"
-        docker run -d --name redis -p 6379:6379 redis
+        docker run -d --name redis -p 6379:6379 redis:$REDIS_VERSION
         ;;
       stop)
         cli_log "Stopping Redis Service"
@@ -109,7 +109,7 @@ case "$service" in
         cli_log "Starting Elastic Search Service"
         config=$(echo $(cat $(pwd)/config/elastic-search.config))
         sudo sysctl -w vm.max_map_count=262144
-        docker run -d --name elastic-search $config --env-file $(pwd)/config/elastic-search.env docker.elastic.co/elasticsearch/elasticsearch:7.14.0
+        docker run -d --name elastic-search $config --env-file $(pwd)/config/elastic-search.env docker.elastic.co/elasticsearch/elasticsearch:$ELASTICSEARCH_VERSION
         ;;
       stop)
         cli_log "Stopping Elastic Search Service"
@@ -126,7 +126,7 @@ case "$service" in
       start)
         cli_log "Starting Kibana Service"
         elasticSearchHost=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' elastic-search)
-        docker run -d --name kibana --link elastic-search --env ELASTICSEARCH_HOSTS=http://$elasticSearchHost:9200 -p 5601:5601 docker.elastic.co/kibana/kibana:7.14.0
+        docker run -d --name kibana --link elastic-search --env ELASTICSEARCH_HOSTS=http://$elasticSearchHost:9200 -p 5601:5601 docker.elastic.co/kibana/kibana:$KIBANA_VERSION
         ;;
       stop)
         cli_log "Stopping Kibana Service"
