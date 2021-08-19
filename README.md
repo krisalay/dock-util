@@ -9,6 +9,8 @@ This Dock Utility provides the functionality to fork up docker services upon nee
 
 - RabbitMQ
 - Redis
+- Elastic Search
+- Kibana
 
 ## Prerequisites
 - Docker installed in the system and accessible by non-root user
