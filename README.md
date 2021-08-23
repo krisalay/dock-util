@@ -15,6 +15,11 @@ This Dock Utility provides the functionality to fork up docker services upon nee
 ## Prerequisites
 - Docker installed in the system and accessible by non-root user
 
+## Configurations
+##### Redis
+1. **Data Persistence**
+If we want to persist the data in the host machine, then we can set the value of **REDIS_PERSIST_VOLUME=true** in *env* file. If its *false*, then the volume will be deleted once the container is stopped. 
+
 ## Steps to use the utility
 Run the following commands before using the utility
 1. `make`
@@ -36,13 +41,13 @@ Stops RabbitMQ and its management plugin service.
 ```sh
 ./container redis start
 ```
-Starts a Redis service on port 6379.
+Starts a Redis service on port 6379. It creates a docker volume with the name *redis_volume* at */var/lib/docker/volumes/redis_volume/_data*. By default it will create a temporary volume, which will be removed when the redis container stops. If you want to persist data and mount that data when the redis container starts, then you can set the value **REDIS_PERSIST_VOLUME=true** in *env* file. If its *false*, then the volume will be removed once the container is stopped. 
 
 **Stop a Redis service**
 ```sh
 ./container redis stop
 ```
-Stops Redis service.
+Stops Redis service. If the value of **REDIS_PERSIST_VOLUME** is set to *true* in *env* file then the data will be stored in the host machine and can be used by any new redis container or restarting the redis container. If its *false*, then the volume will be removed once the container is stopped. 
 
 **Start a Redis CLI**
 ```sh

@@ -80,11 +80,12 @@ case "$service" in
     case "$operation" in
       start)
         cli_log "Starting Redis Service"
-        docker run -d --name redis -p 6379:6379 redis:$REDIS_VERSION
+        docker run -d --name redis --mount source=$REDIS_VOLUME_NAME,target=/data -p 6379:6379 redis:$REDIS_VERSION --appendonly yes
         ;;
       stop)
         cli_log "Stopping Redis Service"
         docker rm --force redis
+        delete_volume $REDIS_VOLUME_NAME $REDIS_PERSIST_VOLUME
         ;;
       *)
         cli_help "Invalid operation provided. Use either one of these: start, stop"
@@ -95,7 +96,7 @@ case "$service" in
     case "$operation" in
       start)
         cli_log "Starting Redis CLI Service"
-        [ ! "$(docker ps -a | grep redis)" ] && docker run -d --name redis -p 6379:6379 redis
+        [ ! "$(docker ps -a | grep redis)" ] && ./container redis start
         docker exec -it redis redis-cli
         ;;
       *)
