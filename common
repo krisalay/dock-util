@@ -5,3 +5,13 @@ cli_log() {
   timestamp=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
   echo "== $script_name $timestamp $1"
 }
+
+delete_volume() {
+  local volumeName=$1
+  local persistent=$2
+
+  if [ "$persistent" != true ] ; then
+    cli_log "Deleting volume $volumeName"
+    docker volume rm $volumeName
+  fi
+}
